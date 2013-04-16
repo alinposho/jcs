@@ -15,7 +15,6 @@ public class BasicJcsConfigTest {
     public void testAddListener() throws CacheException {
 
         JCS jcs = JCS.getInstance("testCache1");
-
         MyEventHandler meh = new MyEventHandler();
 
         // jcs.getDefaultElementAttributes returns a copy not a reference
@@ -24,7 +23,6 @@ public class BasicJcsConfigTest {
         jcs.put("key", "data", attributes);
 
         jcs.freeMemoryElements(1);
-//     jcs.remove("key");
         jcs.clear();
     }
 
