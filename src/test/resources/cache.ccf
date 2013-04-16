@@ -17,3 +17,4 @@ jcs.region.testCache1.cacheattributes.ShrinkerIntervalSeconds=5
 jcs.region.testCache1.cacheattributes.MaxSpoolPerRun=500
 jcs.region.testCache1.elementattributes=org.apache.jcs.engine.ElementAttributes
 jcs.region.testCache1.elementattributes.IsEternal=false
+jcs.region.testCache1.elementattributes.MaxLifeSeconds=4
