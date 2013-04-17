@@ -5,16 +5,60 @@ jcs.default.cacheattributes=org.apache.jcs.engine.CompositeCacheAttributes
 jcs.default.cacheattributes.MaxObjects=10
 jcs.default.cacheattributes.MemoryCacheName=org.apache.jcs.engine.memory.lru.LRUMemoryCache
 
-# PRE-DEFINED CACHE REGIONS
+# ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND region for the event with the same name
 
-jcs.region.testCache1=LTCP
-jcs.region.testCache1.cacheattributes=org.apache.jcs.engine.CompositeCacheAttributes
-jcs.region.testCache1.cacheattributes.MaxObjects=10
-jcs.region.testCache1.cacheattributes.MemoryCacheName=org.apache.jcs.engine.memory.lru.LRUMemoryCache
-jcs.region.testCache1.cacheattributes.UseMemoryShrinker=true
-jcs.region.testCache1.cacheattributes.MaxMemoryIdleTimeSeconds=5
-jcs.region.testCache1.cacheattributes.ShrinkerIntervalSeconds=5
-jcs.region.testCache1.cacheattributes.MaxSpoolPerRun=500
-jcs.region.testCache1.elementattributes=org.apache.jcs.engine.ElementAttributes
-jcs.region.testCache1.elementattributes.IsEternal=false
-jcs.region.testCache1.elementattributes.MaxLifeSeconds=4
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND=LTCP
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND.cacheattributes=org.apache.jcs.engine.CompositeCacheAttributes
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND.cacheattributes.MaxObjects=10
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND.cacheattributes.MemoryCacheName=org.apache.jcs.engine.memory.lru.LRUMemoryCache
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND.cacheattributes.UseMemoryShrinker=true
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND.cacheattributes.MaxMemoryIdleTimeSeconds=5
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND.cacheattributes.ShrinkerIntervalSeconds=5
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND.cacheattributes.MaxSpoolPerRun=500
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND.elementattributes=org.apache.jcs.engine.ElementAttributes
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND.elementattributes.IsEternal=false
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND.elementattributes.MaxLifeSeconds=4
+
+# ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST=LTCP
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST.cacheattributes=org.apache.jcs.engine.CompositeCacheAttributes
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST.cacheattributes.MaxObjects=10
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST.cacheattributes.MemoryCacheName=org.apache.jcs.engine.memory.lru.LRUMemoryCache
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST.cacheattributes.UseMemoryShrinker=false
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST.cacheattributes.MaxSpoolPerRun=500
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST.elementattributes=org.apache.jcs.engine.ElementAttributes
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST.elementattributes.IsEternal=false
+jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST.elementattributes.MaxLifeSeconds=4
+
+
+
+# ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE region for the event with the same name
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE=LTCP
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE.cacheattributes=org.apache.jcs.engine.CompositeCacheAttributes
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE.cacheattributes.MaxObjects=10
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE.cacheattributes.MemoryCacheName=org.apache.jcs.engine.memory.lru.LRUMemoryCache
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE.cacheattributes.UseMemoryShrinker=false
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE.cacheattributes.MaxSpoolPerRun=500
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE.elementattributes=org.apache.jcs.engine.ElementAttributes
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE.elementattributes.IsEternal=true
+
+# ELEMENT_EVENT_SPOOLED_DISK_AVAILABLE region for the event with the same name
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_AVAILABLE=LTCP
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_AVAILABLE.cacheattributes=org.apache.jcs.engine.CompositeCacheAttributes
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_AVAILABLE.cacheattributes.MaxObjects=10
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_AVAILABLE.cacheattributes.MemoryCacheName=org.apache.jcs.engine.memory.lru.LRUMemoryCache
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_AVAILABLE.cacheattributes.UseMemoryShrinker=false
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_AVAILABLE.cacheattributes.MaxSpoolPerRun=500
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_AVAILABLE.elementattributes=org.apache.jcs.engine.ElementAttributes
+jcs.region.ELEMENT_EVENT_SPOOLED_DISK_AVAILABLE.elementattributes.IsEternal=true
+
+# ELEMENT_EVENT_SPOOLED_NOT_ALLOWED
+jcs.region.ELEMENT_EVENT_SPOOLED_NOT_ALLOWED=LTCP
+jcs.region.ELEMENT_EVENT_SPOOLED_NOT_ALLOWED.cacheattributes=org.apache.jcs.engine.CompositeCacheAttributes
+jcs.region.ELEMENT_EVENT_SPOOLED_NOT_ALLOWED.cacheattributes.MaxObjects=10
+jcs.region.ELEMENT_EVENT_SPOOLED_NOT_ALLOWED.cacheattributes.MemoryCacheName=org.apache.jcs.engine.memory.lru.LRUMemoryCache
+jcs.region.ELEMENT_EVENT_SPOOLED_NOT_ALLOWED.cacheattributes.UseMemoryShrinker=false
+jcs.region.ELEMENT_EVENT_SPOOLED_NOT_ALLOWED.cacheattributes.MaxSpoolPerRun=500
+jcs.region.ELEMENT_EVENT_SPOOLED_NOT_ALLOWED.elementattributes=org.apache.jcs.engine.ElementAttributes
+jcs.region.ELEMENT_EVENT_SPOOLED_NOT_ALLOWED.elementattributes.IsEternal=true
+jcs.region.ELEMENT_EVENT_SPOOLED_NOT_ALLOWED.elementattributes.isSpool=false

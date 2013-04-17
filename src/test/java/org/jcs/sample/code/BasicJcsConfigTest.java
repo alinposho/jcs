@@ -16,20 +16,22 @@ import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertNotSame;
 
 public class BasicJcsConfigTest {
 
-
-    public static final String TEST_CACHE_REGION = "testCache1";
-    public static final int MAX_MEMORY_IDLE_TIME = 5;
-    public static final String BASIC_JCS_CONFIG_FILE_NAME = "BasicJcsConfigTest.ccf";
+    private static final String ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND = "ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND";
+    private static final String ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE = "ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE";
+    private static final String ELEMENT_EVENT_SPOOLED_NOT_ALLOWED = "ELEMENT_EVENT_SPOOLED_NOT_ALLOWED";
+    private static final String ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST = "ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST";
+    private static final int MAX_MEMORY_IDLE_TIME = 5;
+    public static final int SECOND = 1000;
+    private static final int ELEMENT_MAX_IDLE = 4;
 
     @Test
-    public void should_automatically_evict_objects_from_cache() throws CacheException, InterruptedException {
-
+    public void should_evict_objects_from_cache_in_the_background() throws CacheException, InterruptedException {
         // Prepare
-        JCS jcs = JCS.getInstance(TEST_CACHE_REGION);
-
+        JCS jcs = loadJcsForRegion(ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND);
         TestEventHandler eventHandler = new TestEventHandler();
         Map<String, String> elementsPutIntoCache = putElementsIntoCache(jcs, eventHandler, 9);
 
@@ -43,15 +45,12 @@ public class BasicJcsConfigTest {
     private void assertElementsWereEvictedFromCache(JCS jcs, Map<String, String> elementsPutIntoCache) {
         for (String key : elementsPutIntoCache.keySet())
             assertNull(jcs.get(key));
-
     }
 
     @Test
-    public void should_fire_the_event_listener_when_evicting_objects_from_cache() throws CacheException, InterruptedException {
-
+    public void should_fire_the_element_exceeded_max_life_background_event() throws CacheException, InterruptedException {
         // Prepare
-        JCS jcs = JCS.getInstance(TEST_CACHE_REGION);
-
+        JCS jcs = loadJcsForRegion(ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND);
         TestEventHandler eventHandler = new TestEventHandler();
         putElementsIntoCache(jcs, eventHandler, 1);
 
@@ -59,41 +58,93 @@ public class BasicJcsConfigTest {
         waitForCacheToEvictElements();
 
         // Verify
-        assertEventFiredForElementEvictedFromCache(eventHandler);
+        assertEventFired(IElementEventConstants.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND, eventHandler);
     }
 
     @Test
-    public void should_spool_elements_from_cache_and_fire_the_appropriate_event() throws CacheException, InterruptedException {
-
+    public void should_fire_spooled_disk_not_available() throws CacheException, InterruptedException {
         // Prepare
-        JCS jcs = JCS.getInstance(TEST_CACHE_REGION);
+        JCS jcs = loadJcsForRegion(ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE);
         TestEventHandler eventHandler = new TestEventHandler();
         Map<String, String> elementsPutIntoCache = putElementsIntoCache(jcs, eventHandler, 1);
 
         // Exercise
-        jcs.freeMemoryElements(elementsPutIntoCache.size());
-        waitForEventsToBeFired();
+        makeCacheFireSpoolToDiskEvent(jcs, elementsPutIntoCache);
 
         // Verify
-        assertElementsSpooledButDiskNotAvailable(eventHandler, elementsPutIntoCache.size());
+
+        assertEventFired(IElementEventConstants.ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE, eventHandler);
+    }
+
+    @Test
+    public void should_fire_spool_not_allowed_event() throws CacheException, InterruptedException {
+        // Prepare
+        JCS jcs = loadJcsForRegion(ELEMENT_EVENT_SPOOLED_NOT_ALLOWED);
+        TestEventHandler eventHandler = new TestEventHandler();
+        Map<String, String> elementsPutIntoCache = putElementsIntoCache(jcs, eventHandler, 1);
+
+        // Exercise
+        makeCacheFireSpoolToDiskEvent(jcs, elementsPutIntoCache);
+
+        // Verify
+        assertEventFired(IElementEventConstants.ELEMENT_EVENT_SPOOLED_NOT_ALLOWED, eventHandler);
+    }
+
+    private void makeCacheFireSpoolToDiskEvent(JCS jcs, Map<String, String> elementsPutIntoCache) throws CacheException, InterruptedException {
+        jcs.freeMemoryElements(elementsPutIntoCache.size());
+        waitForEventsToBeFired();
+    }
+
+    private JCS loadJcsForRegion(String regionName) throws CacheException {
+        return JCS.getInstance(regionName);
     }
 
     private void waitForEventsToBeFired() throws InterruptedException {
-        Thread.sleep(2000);
+        Thread.sleep(3 * SECOND);
     }
 
-    private void assertElementsSpooledButDiskNotAvailable(TestEventHandler eventHandler, int expectedNoOfEvents) {
-        List<IElementEvent> eventsReceived = eventHandler.getEventsReceived();
-        assertEquals(expectedNoOfEvents, eventsReceived.size());
-        for (IElementEvent event : eventsReceived) {
-            assertEquals(IElementEventConstants.ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE, event.getElementEvent());
+    @Test
+    public void should_fire_the_max_life_on_request_event() throws CacheException, InterruptedException {
+        // Prepare
+        JCS jcs = loadJcsForRegion(ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST);
+        TestEventHandler eventHandler = new TestEventHandler();
+        Map<String, String> elementsPutInCache = putElementsIntoCache(jcs, eventHandler, 1);
+
+        // Exercise
+        waitToExceedElementMaxLife(elementsPutInCache, jcs);
+
+        assertEventNotFired(IElementEventConstants.ELEMENT_EVENT_EXCEEDED_IDLETIME_BACKGROUND, eventHandler);
+        assertEventNotFired(IElementEventConstants.ELEMENT_EVENT_EXCEEDED_IDLETIME_ONREQUEST, eventHandler);
+
+        for (String key : elementsPutInCache.keySet()) {
+            assertNull("Element was not evicted from cache on access", jcs.get(elementsPutInCache));
         }
+
+        waitForEventsToBeFired();
+
+        assertEventFired(IElementEventConstants.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST, eventHandler);
     }
 
-    private void assertEventFiredForElementEvictedFromCache(TestEventHandler eventHandler) {
+    private void waitToExceedElementMaxLife(Map<String, String> elementsPutInCache, JCS cache) throws InterruptedException {
+        boolean elementsEvicted = false;
+        do {
+            elementsEvicted = true;
+            for (String key : elementsPutInCache.keySet()) {
+                if(cache.get(key) != null) {
+                    elementsEvicted = false;
+                    Thread.sleep(1 * SECOND);
+                    break;
+                }
+            }
+        } while (!elementsEvicted);
+    }
+
+    private void assertEventFired(int eventType, TestEventHandler eventHandler) {
         List<IElementEvent> eventsReceived = eventHandler.getEventsReceived();
         assertEquals(1, eventsReceived.size());
-        assertEquals(IElementEventConstants.ELEMENT_EVENT_EXCEEDED_MAXLIFE_BACKGROUND, eventsReceived.get(0).getElementEvent());
+        for (IElementEvent event : eventsReceived) {
+            assertEquals(eventType, event.getElementEvent());
+        }
     }
 
     private void waitForCacheToEvictElements() throws InterruptedException {
@@ -117,7 +168,16 @@ public class BasicJcsConfigTest {
         return elementsPutInTheCache;
     }
 
+    private void assertEventNotFired(int eventType, TestEventHandler eventHandler) {
+        List<IElementEvent> eventsReceived = eventHandler.getEventsReceived();
+        for (IElementEvent event : eventsReceived) {
+            assertNotSame(eventType, event.getElementEvent());
+        }
+    }
 
+    private void waitToExceedElementMaxIdle() throws InterruptedException {
+        Thread.sleep(ELEMENT_MAX_IDLE * SECOND);
+    }
 }
 
 class TestEventHandler implements IElementEventHandler {
