@@ -30,8 +30,6 @@ jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST.elementattributes=org.apache
 jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST.elementattributes.IsEternal=false
 jcs.region.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST.elementattributes.MaxLifeSeconds=4
 
-
-
 # ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE region for the event with the same name
 jcs.region.ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE=LTCP
 jcs.region.ELEMENT_EVENT_SPOOLED_DISK_NOT_AVAILABLE.cacheattributes=org.apache.jcs.engine.CompositeCacheAttributes

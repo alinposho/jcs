@@ -114,12 +114,6 @@ public class BasicJcsConfigTest {
         waitToExceedElementMaxLife(elementsPutInCache, jcs);
 
         assertEventNotFired(IElementEventConstants.ELEMENT_EVENT_EXCEEDED_IDLETIME_BACKGROUND, eventHandler);
-        assertEventNotFired(IElementEventConstants.ELEMENT_EVENT_EXCEEDED_IDLETIME_ONREQUEST, eventHandler);
-
-        for (String key : elementsPutInCache.keySet()) {
-            assertNull("Element was not evicted from cache on access", jcs.get(elementsPutInCache));
-        }
-
         waitForEventsToBeFired();
 
         assertEventFired(IElementEventConstants.ELEMENT_EVENT_EXCEEDED_MAXLIFE_ONREQUEST, eventHandler);
